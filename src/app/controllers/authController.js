@@ -18,6 +18,7 @@ function generateToken(params = {}) {
 
 router.post('/register', async (req, res) => {
   const { email } = req.body;
+  const { cpf } = req.body;
 
   try {
     if (await User.findOne({ email }))
@@ -59,6 +60,7 @@ router.post('/authenticate', async (req, res) => {
 });
 
 router.post('/forgot_password', async (req, res) => {
+  // const mailer = new Mail;
   const { email } = req.body;
 
   try {
@@ -72,7 +74,7 @@ router.post('/forgot_password', async (req, res) => {
     const now = new Date();
     now.setHours(now.getHours() + 1);
 
-    await User.useFindAndModify(user.id, {
+    await User.updateOne(user.id, {
       '$set': {
         passwordResetToken: token,
         passwordResetExpires: now,
@@ -81,7 +83,7 @@ router.post('/forgot_password', async (req, res) => {
 
     mailer.sendMail({
       to: email,
-      from: 'rodolpho.narciso@gmail.com',
+      from: 'rodolpho@narciso.com.br',
       template: 'auth/forgot_password',
       context: { token },
     }, (err) => {
